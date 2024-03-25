@@ -1,14 +1,16 @@
 <script module="context" lang="ts">
 	import { createForm } from 'svelte-forms-lib';
-	import yup from 'yup';
+	import * as yup from 'yup';
 	import DataGrid from '$lib/components/data-grid.svelte';
 
-	const { errors, form, touched, handleChange, handleSubmit } = createForm({
+	const { errors, form, touched, isValid, handleChange, handleSubmit } = createForm({
 		initialValues: {
-			email: '',
-			password: ''
+			name: null,
+			email: null,
+			password: null
 		},
 		validationSchema: yup.object().shape({
+			name: yup.string().required(),
 			email: yup.string().email().required(),
 			password: yup.string().required()
 		}),
@@ -41,16 +43,75 @@
 		</label>
 		<div class="flex flex-col">
 			<form on:submit={handleSubmit}>
-				<label class="form-control w-full max-w-xs">
+				<label class="form-control w-full">
 					<div class="label">
-					  <span class="label-text">What is your name?</span>
+						<span class="label-text">Name</span>
 					</div>
-					<input type="text" placeholder="Type here" class="input input-bordered w-full max-w-xs" />
+					<input
+						type="text"
+						placeholder="Type here"
+						class="input input-bordered w-full"
+						class:input-error={$errors.name}
+						name="name"
+						on:change={handleChange}
+						on:blur={handleChange}
+						bind:value={$form.name}
+					/>
+					{#if $errors.name}
+						<div class="label">
+							<span class="label-text-alt text-error">{$errors.name}</span>
+						</div>
+					{/if}
+				</label>
+
+				<label class="form-control w-full">
 					<div class="label">
-					  <span class="label-text-alt">Bottom Left label</span>
-					  <span class="label-text-alt">Bottom Right label</span>
+						<span class="label-text">Email</span>
 					</div>
-				  </label>
+					<input
+						type="email"
+						placeholder="Type here"
+						class="input input-bordered w-full"
+						class:input-error={$errors.email}
+						name="email"
+						on:change={handleChange}
+						on:blur={handleChange}
+						bind:value={$form.email}
+					/>
+					{#if $errors.email}
+						<div class="label">
+							<span class="label-text-alt text-error">{$errors.email}</span>
+						</div>
+					{/if}
+				</label>
+
+				<label class="form-control w-full">
+					<div class="label">
+						<span class="label-text">Password</span>
+					</div>
+					<input
+						type="text"
+						placeholder="Type here"
+						class="input input-bordered w-full"
+						class:input-error={$errors.password}
+						name="password"
+						on:change={handleChange}
+						on:blur={handleChange}
+						bind:value={$form.password}
+					/>
+					{#if $errors.password}
+						<div class="label">
+							<span class="label-text-alt text-error">{$errors.password}</span>
+						</div>
+					{/if}
+				</label>
+
+				<button
+					class="btn btn-primary mt-4"
+					type="submit"
+					disabled={!$isValid || (!$touched.email && !$touched.password && !$touched.name)}
+					>Create user</button
+				>
 			</form>
 		</div>
 	</div>
